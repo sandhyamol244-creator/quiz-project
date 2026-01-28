@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simple Quiz</title>
+<style>
+  body {
+    background-color: #7b2ff7;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  .quiz-container {
+    background-color: #eee;
+    padding: 20px;
+    border-radius: 10px;
+    width: 350px;
+    text-align: center;
+  }
+  h2 {
+    margin-bottom: 15px;
+  }
+  .answer {
+    background-color: #d3d3d3;
+    margin: 8px 0;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    user-select: none;
+  }
+  .answer.correct {
+    background-color: #4CAF50;
+    color: white;
+  }
+  .answer.wrong {
+    background-color: #f44336;
+    color: white;
+  }
+  #nextBtn {
+    margin-top: 15px;
+    padding: 10px 15px;
+    border: none;
+    background-color: #7b2ff7;
+    color: white;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<div class="quiz-container">
+  <h2 id="question">Question goes here</h2>
+  <div id="answers">
+    <!-- Answer buttons will be generated here -->
+  </div>
+  <button id="nextBtn" disabled>Next</button>
+</div>
+
+<script>
+const quiz = [
+  {
+    question: "What is the capital of India?",
+    options: ["Mumbai", "New Delhi", "Kolkata", "Chennai"],
+    answer: "New Delhi"
+  },
+  {
+    question: "Which is the largest planet in our solar system?",
+    options: ["Earth", "Mars", "Jupiter", "Venus"],
+    answer: "Jupiter"
+  },
+  {
+    question: "Who wrote the Mahabharata?",
+    options: ["Kalidasa", "Vyasa", "Valmiki", "Tulsidas"],
+    answer: "Vyasa"
+  },
+  {
+    question: "What is the currency of India?",
+    options: ["Rupee", "Dollar", "Yen", "Euro"],
+    answer: "Rupee"
+  },
+  {
+    question: "Which element has the chemical symbol 'O'?",
+    options: ["Oxygen", "Gold", "Iron", "Hydrogen"],
+    answer: "Oxygen"
+  }
+];
+
+let currentQuestion = 0;
+let score = 0;
+
+const questionEl = document.getElementById("question");
+const answersEl = document.getElementById("answers");
+const nextBtn = document.getElementById("nextBtn");
+
+function loadQuestion() {
+  nextBtn.disabled = true; // disable next button until answer clicked
+  answersEl.innerHTML = "";
+  const q = quiz[currentQuestion];
+  questionEl.textContent = q.question;
+  q.options.forEach(option => {
+    const btn = document.createElement("div");
+    btn.textContent = option;
+    btn.className = "answer";
+    btn.addEventListener("click", () => selectAnswer(btn, q.answer));
+    answersEl.appendChild(btn);
+  });
+}
+
+function selectAnswer(selectedBtn, correctAnswer) {
+  const allBtns = document.querySelectorAll(".answer");
+  allBtns.forEach(btn => {
+    btn.classList.remove("correct", "wrong");
+    btn.style.pointerEvents = "none"; // disable all after selection
+    if(btn.textContent === correctAnswer){
+      btn.classList.add("correct");
+    }
+  });
+  
+  if(selectedBtn.textContent === correctAnswer){
+    score++;
+  } else {
+    selectedBtn.classList.add("wrong");
+  }
+
+  nextBtn.disabled = false; // enable next button
+}
+
+nextBtn.addEventListener("click", () => {
+  currentQuestion++;
+  if(currentQuestion < quiz.length){
+    loadQuestion();
+  } else {
+    showResult();
+  }
+});
+
+function showResult() {
+  questionEl.textContent = `Quiz Completed! Your score: ${score} / ${quiz.length}`;
+  answersEl.innerHTML = "";
+  nextBtn.style.display = "none";
+}
+
+// Load first question
+loadQuestion();
+</script>
+</body>
+</html>
